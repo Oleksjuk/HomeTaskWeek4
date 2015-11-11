@@ -66,7 +66,6 @@ public class TaskManagerImpl implements TaskManager {
 
     private boolean isToday(Date date) {
         Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
 
         Calendar calendarDate = Calendar.getInstance();
         calendarDate.setTime(date);
