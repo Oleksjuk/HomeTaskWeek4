@@ -47,6 +47,7 @@ public class Main {
         List<Task> tasks;
         for (String category : taskManager.getCategories()){
             tasks = taskManager.getTasksByCategories().get(category);
+            System.out.println(category + ":");
             tasks.forEach(System.out::println);
         }
         System.out.println("tasks for today:");

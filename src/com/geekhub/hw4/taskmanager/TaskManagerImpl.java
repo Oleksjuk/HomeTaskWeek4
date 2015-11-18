@@ -7,13 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class TaskManagerImpl implements TaskManager {
 
-    private Map<Date,Task> tasks = new HashMap<>();
+    private Map<Date,Task> tasks = new TreeMap<>();
 
     @Override
     public void addTask(Date date, Task task) {
@@ -34,18 +33,15 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public Map<String, List<Task>> getTasksByCategories() {
         Map<String,List<Task>> tasksByCategories = new HashMap<>();
-        Task task = null;
-        List<Task> tasksByCategory = null;
-        for (Date date : getOrderedDateOfTasks()){
-            task = tasks.get(date);
-            tasksByCategory = tasksByCategories.get(task.getCategory());
-            if (tasksByCategory == null) {
-                tasksByCategory = new ArrayList<>();
+
+        for (Task task : tasks.values()){
+            String category = task.getCategory();
+
+            if (tasksByCategories.get(category) == null) {
+                tasksByCategories.put(category, new ArrayList<>());
             }
-            if (!tasksByCategory.contains(task)){
-                tasksByCategory.add(task);
-                tasksByCategories.put(task.getCategory(),tasksByCategory);
-            }
+
+            tasksByCategories.get(category).add(task);
         }
 
         return tasksByCategories;
@@ -59,9 +55,10 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public List<Task> getTasksForToday() {
 
-        List<Task> tasksForToday = getOrderedDateOfTasks().stream().filter(taskDate -> isToday(taskDate)).map(tasks::get).collect(Collectors.toList());
-
-        return tasksForToday;
+        return tasks.keySet().stream()
+                .filter(taskDate -> isToday(taskDate))
+                .map(tasks::get)
+                .collect(Collectors.toList());
     }
 
     private boolean isToday(Date date) {
@@ -80,7 +77,4 @@ public class TaskManagerImpl implements TaskManager {
         return false;
     }
 
-    private Set<Date> getOrderedDateOfTasks() {
-        return new TreeSet<>(tasks.keySet());
-    }
 }
